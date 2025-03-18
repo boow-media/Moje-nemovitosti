@@ -1,9 +1,12 @@
 <?php
 /**
- * Plugin Name: Moje Nemovitosti
- * Description: Vlastní post type Nemovitosti + Meta Box pole pro správu realit.
- * Version: 1.0
- * Author: Boow Media (www.boow.cz)
+ * Plugin Name: Moje nemovitosti
+ * Plugin URI: https://boow.cz
+ * Description: Jednoduchý plugin pro realitní makléře – umožňuje snadno přidávat a upravovat nabídky nemovitostí.
+ * Version: 1.0.2
+ * Author: Boow Media
+ * Author URI: https://boow.cz
+ * License: GPL2
  */
 
 if (!defined('ABSPATH')) {
@@ -15,7 +18,7 @@ if (!class_exists('RWMB_Loader')) {
     add_action('admin_notices', function () {
         echo '<div class="notice notice-error"><p><strong>Plugin Moje Nemovitosti potřebuje aktivní Meta Box!</strong></p></div>';
     });
-    return; // Zastaví běh pluginu, pokud Meta Box není aktivní
+    return;
 }
 
 // ✅ Vytvoření vlastního post typu "Nemovitosti"
@@ -41,7 +44,7 @@ function vytvorit_nemovitosti_cpt() {
     );
     register_post_type('nemovitosti', $args);
 }
-add_action('init', 'vytvorit_nemovitosti_cpt', 10); // Opravená registrace CPT
+add_action('init', 'vytvorit_nemovitosti_cpt', 10);
 
 // ✅ Přidání vlastních polí pomocí Meta Box
 add_filter('rwmb_meta_boxes', function($meta_boxes) {
@@ -88,4 +91,90 @@ add_filter('rwmb_meta_boxes', function($meta_boxes) {
         ],
     ];
     return $meta_boxes;
+});
+
+// ✅ Automatické aktualizace pluginu z GitHubu
+class Moje_Nemovitosti_Updater {
+    private $plugin_file;
+    private $plugin_slug;
+    private $github_user;
+    private $github_repo;
+
+    public function __construct($plugin_file) {
+        $this->plugin_file = $plugin_file;
+        $this->plugin_slug = plugin_basename($plugin_file);
+        $this->github_user = 'boow-media';
+        $this->github_repo = 'Moje-nemovitosti';
+
+        add_filter('pre_set_site_transient_update_plugins', [$this, 'check_for_updates']);
+        add_filter('plugins_api', [$this, 'plugin_info'], 10, 3);
+    }
+
+    private function get_plugin_version() {
+        $plugin_data = get_file_data($this->plugin_file, ['Version' => 'Version']);
+        return $plugin_data['Version'];
+    }
+
+    public function check_for_updates($transient) {
+        if (empty($transient->checked)) {
+            return $transient;
+        }
+
+        $current_version = $this->get_plugin_version();
+        $request = wp_remote_get("https://api.github.com/repos/{$this->github_user}/{$this->github_repo}/releases/latest", [
+            'headers' => ['User-Agent' => 'WordPress']
+        ]);
+
+        if (is_wp_error($request)) {
+            return $transient;
+        }
+
+        $release = json_decode(wp_remote_retrieve_body($request));
+
+        if (!empty($release->tag_name) && version_compare($current_version, ltrim($release->tag_name, 'v'), '<')) {
+            $transient->response[$this->plugin_slug] = (object) [
+                'new_version' => ltrim($release->tag_name, 'v'),
+                'package' => $release->zipball_url,
+                'url' => $release->html_url
+            ];
+        }
+
+        return $transient;
+    }
+
+    public function plugin_info($false, $action, $args) {
+        if ($action !== 'plugin_information' || $args->slug !== dirname($this->plugin_slug)) {
+            return $false;
+        }
+
+        $request = wp_remote_get("https://api.github.com/repos/{$this->github_user}/{$this->github_repo}/releases/latest", [
+            'headers' => ['User-Agent' => 'WordPress']
+        ]);
+
+        if (is_wp_error($request)) {
+            return $false;
+        }
+
+        $release = json_decode(wp_remote_retrieve_body($request));
+
+        return (object) [
+            'name' => 'Moje Nemovitosti',
+            'slug' => $this->plugin_slug,
+            'version' => ltrim($release->tag_name, 'v'),
+            'author' => 'Boow Media',
+            'download_link' => $release->zipball_url ?? '',
+            'sections' => [
+                'description' => 'Plugin pro správu nemovitostí s automatickými aktualizacemi přes GitHub.',
+            ]
+        ];
+    }
+}
+
+// ✅ Spuštění updateru
+new Moje_Nemovitosti_Updater(__FILE__);
+
+// ✅ Reset cache aktualizací po aktivaci pluginu
+register_activation_hook(__FILE__, function () {
+    delete_site_transient('update_plugins');
+    wp_update_plugins();
 });
