@@ -2,8 +2,8 @@
 /**
  * Plugin Name: Moje nemovitosti
  * Plugin URI: https://boow.cz
- * Description: Jednoduchý plugin pro realitní makléře – umožňuje snadno přidávat a upravovat nabídky nemovitostí.
- * Version: 1.0.2
+ * Description: Plugin pro realitní makléře – umožňuje snadno přidávat a upravovat nabídky nemovitostí.
+ * Version: 1.0.3
  * Author: Boow Media
  * Author URI: https://boow.cz
  * License: GPL2
@@ -102,7 +102,7 @@ class Moje_Nemovitosti_Updater {
 
     public function __construct($plugin_file) {
         $this->plugin_file = $plugin_file;
-        $this->plugin_slug = plugin_basename($plugin_file);
+        $this->plugin_slug = 'moje-nemovitosti/moje-nemovitosti.php'; 
         $this->github_user = 'boow-media';
         $this->github_repo = 'Moje-nemovitosti';
 
@@ -143,7 +143,7 @@ class Moje_Nemovitosti_Updater {
     }
 
     public function plugin_info($false, $action, $args) {
-        if ($action !== 'plugin_information' || $args->slug !== dirname($this->plugin_slug)) {
+        if ($action !== 'plugin_information' || $args->slug !== 'moje-nemovitosti') {
             return $false;
         }
 
@@ -159,7 +159,7 @@ class Moje_Nemovitosti_Updater {
 
         return (object) [
             'name' => 'Moje Nemovitosti',
-            'slug' => $this->plugin_slug,
+            'slug' => 'moje-nemovitosti',
             'version' => ltrim($release->tag_name, 'v'),
             'author' => 'Boow Media',
             'download_link' => $release->zipball_url ?? '',
