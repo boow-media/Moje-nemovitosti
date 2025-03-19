@@ -3,7 +3,7 @@
  * Plugin Name: Moje nemovitosti
  * Plugin URI: https://boow.cz
  * Description: Plugin pro realitní makléře – umožňuje snadno přidávat a upravovat nabídky nemovitostí.
- * Version: 1.0.3
+ * Version: 1.0.4
  * Author: Boow Media
  * Author URI: https://boow.cz
  * License: GPL2
@@ -53,41 +53,11 @@ add_filter('rwmb_meta_boxes', function($meta_boxes) {
         'id'     => 'detaily_nemovitosti',
         'post_types' => ['nemovitosti'],
         'fields' => [
-            [
-                'name' => 'Cena',
-                'id'   => 'cena',
-                'type' => 'text',
-                'placeholder' => 'Zadejte cenu v Kč',
-            ],
-            [
-                'name' => 'Dispozice',
-                'id'   => 'dispozice',
-                'type' => 'text',
-                'placeholder' => 'Např. 3+kk',
-            ],
-            [
-                'name' => 'Adresa',
-                'id'   => 'adresa',
-                'type' => 'text',
-                'placeholder' => 'Např. Praha 1, Karlova 10',
-            ],
-            [
-                'name' => 'Velikost (m²)',
-                'id'   => 'velikost',
-                'type' => 'number',
-                'placeholder' => 'Např. 75',
-            ],
-            [
-                'name' => 'Typ nemovitosti',
-                'id'   => 'typ_nemovitosti',
-                'type' => 'select',
-                'options' => [
-                    'byt' => 'Byt',
-                    'dum' => 'Dům',
-                    'pozemek' => 'Pozemek',
-                    'komercni' => 'Komerční prostor',
-                ],
-            ],
+            ['name' => 'Cena', 'id' => 'cena', 'type' => 'text', 'placeholder' => 'Zadejte cenu v Kč'],
+            ['name' => 'Dispozice', 'id' => 'dispozice', 'type' => 'text', 'placeholder' => 'Např. 3+kk'],
+            ['name' => 'Adresa', 'id' => 'adresa', 'type' => 'text', 'placeholder' => 'Např. Praha 1, Karlova 10'],
+            ['name' => 'Velikost (m²)', 'id' => 'velikost', 'type' => 'number', 'placeholder' => 'Např. 75'],
+            ['name' => 'Typ nemovitosti', 'id' => 'typ_nemovitosti', 'type' => 'select', 'options' => ['byt' => 'Byt', 'dum' => 'Dům', 'pozemek' => 'Pozemek', 'komercni' => 'Komerční prostor']],
         ],
     ];
     return $meta_boxes;
@@ -95,24 +65,13 @@ add_filter('rwmb_meta_boxes', function($meta_boxes) {
 
 // ✅ Automatické aktualizace pluginu z GitHubu
 class Moje_Nemovitosti_Updater {
-    private $plugin_file;
-    private $plugin_slug;
-    private $github_user;
-    private $github_repo;
+    private $plugin_slug = 'moje-nemovitosti/moje-nemovitosti.php';
+    private $github_user = 'boow-media';
+    private $github_repo = 'Moje-nemovitosti';
 
-    public function __construct($plugin_file) {
-        $this->plugin_file = $plugin_file;
-        $this->plugin_slug = 'moje-nemovitosti/moje-nemovitosti.php'; 
-        $this->github_user = 'boow-media';
-        $this->github_repo = 'Moje-nemovitosti';
-
+    public function __construct() {
         add_filter('pre_set_site_transient_update_plugins', [$this, 'check_for_updates']);
         add_filter('plugins_api', [$this, 'plugin_info'], 10, 3);
-    }
-
-    private function get_plugin_version() {
-        $plugin_data = get_file_data($this->plugin_file, ['Version' => 'Version']);
-        return $plugin_data['Version'];
     }
 
     public function check_for_updates($transient) {
@@ -120,10 +79,7 @@ class Moje_Nemovitosti_Updater {
             return $transient;
         }
 
-        $current_version = $this->get_plugin_version();
-        $request = wp_remote_get("https://api.github.com/repos/{$this->github_user}/{$this->github_repo}/releases/latest", [
-            'headers' => ['User-Agent' => 'WordPress']
-        ]);
+        $request = wp_remote_get("https://api.github.com/repos/{$this->github_user}/{$this->github_repo}/releases/latest", ['headers' => ['User-Agent' => 'WordPress']]);
 
         if (is_wp_error($request)) {
             return $transient;
@@ -131,7 +87,7 @@ class Moje_Nemovitosti_Updater {
 
         $release = json_decode(wp_remote_retrieve_body($request));
 
-        if (!empty($release->tag_name) && version_compare($current_version, ltrim($release->tag_name, 'v'), '<')) {
+        if (!empty($release->tag_name)) {
             $transient->response[$this->plugin_slug] = (object) [
                 'new_version' => ltrim($release->tag_name, 'v'),
                 'package' => $release->zipball_url,
@@ -147,9 +103,7 @@ class Moje_Nemovitosti_Updater {
             return $false;
         }
 
-        $request = wp_remote_get("https://api.github.com/repos/{$this->github_user}/{$this->github_repo}/releases/latest", [
-            'headers' => ['User-Agent' => 'WordPress']
-        ]);
+        $request = wp_remote_get("https://api.github.com/repos/{$this->github_user}/{$this->github_repo}/releases/latest", ['headers' => ['User-Agent' => 'WordPress']]);
 
         if (is_wp_error($request)) {
             return $false;
@@ -163,15 +117,13 @@ class Moje_Nemovitosti_Updater {
             'version' => ltrim($release->tag_name, 'v'),
             'author' => 'Boow Media',
             'download_link' => $release->zipball_url ?? '',
-            'sections' => [
-                'description' => 'Plugin pro správu nemovitostí s automatickými aktualizacemi přes GitHub.',
-            ]
+            'sections' => ['description' => 'Plugin pro správu nemovitostí s automatickými aktualizacemi přes GitHub.']
         ];
     }
 }
 
 // ✅ Spuštění updateru
-new Moje_Nemovitosti_Updater(__FILE__);
+new Moje_Nemovitosti_Updater();
 
 // ✅ Reset cache aktualizací po aktivaci pluginu
 register_activation_hook(__FILE__, function () {
