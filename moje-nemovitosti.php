@@ -3,7 +3,7 @@
  * Plugin Name: Moje nemovitosti
  * Plugin URI: https://boow.cz
  * Description: Plugin pro realitní makléře – umožňuje snadno přidávat a upravovat nabídky nemovitostí.
- * Version: 1.0.4
+ * Version: 1.0.5
  * Author: Boow Media
  * Author URI: https://boow.cz
  * License: GPL2
@@ -68,6 +68,7 @@ class Moje_Nemovitosti_Updater {
     private $plugin_slug = 'moje-nemovitosti/moje-nemovitosti.php';
     private $github_user = 'boow-media';
     private $github_repo = 'Moje-nemovitosti';
+    private $github_zip_name = 'moje-nemovitosti.zip'; // Název ručně nahraného ZIPu
 
     public function __construct() {
         add_filter('pre_set_site_transient_update_plugins', [$this, 'check_for_updates']);
@@ -79,7 +80,9 @@ class Moje_Nemovitosti_Updater {
             return $transient;
         }
 
-        $request = wp_remote_get("https://api.github.com/repos/{$this->github_user}/{$this->github_repo}/releases/latest", ['headers' => ['User-Agent' => 'WordPress']]);
+        $request = wp_remote_get("https://api.github.com/repos/{$this->github_user}/{$this->github_repo}/releases/latest", [
+            'headers' => ['User-Agent' => 'WordPress']
+        ]);
 
         if (is_wp_error($request)) {
             return $transient;
@@ -88,9 +91,12 @@ class Moje_Nemovitosti_Updater {
         $release = json_decode(wp_remote_retrieve_body($request));
 
         if (!empty($release->tag_name)) {
+            // ✅ Použije se ručně nahraný ZIP soubor, NE generovaný ZIP
+            $zip_url = "https://github.com/{$this->github_user}/{$this->github_repo}/releases/download/{$release->tag_name}/{$this->github_zip_name}";
+
             $transient->response[$this->plugin_slug] = (object) [
                 'new_version' => ltrim($release->tag_name, 'v'),
-                'package' => $release->zipball_url,
+                'package' => $zip_url,
                 'url' => $release->html_url
             ];
         }
@@ -103,7 +109,9 @@ class Moje_Nemovitosti_Updater {
             return $false;
         }
 
-        $request = wp_remote_get("https://api.github.com/repos/{$this->github_user}/{$this->github_repo}/releases/latest", ['headers' => ['User-Agent' => 'WordPress']]);
+        $request = wp_remote_get("https://api.github.com/repos/{$this->github_user}/{$this->github_repo}/releases/latest", [
+            'headers' => ['User-Agent' => 'WordPress']
+        ]);
 
         if (is_wp_error($request)) {
             return $false;
@@ -116,7 +124,7 @@ class Moje_Nemovitosti_Updater {
             'slug' => 'moje-nemovitosti',
             'version' => ltrim($release->tag_name, 'v'),
             'author' => 'Boow Media',
-            'download_link' => $release->zipball_url ?? '',
+            'download_link' => "https://github.com/{$this->github_user}/{$this->github_repo}/releases/download/{$release->tag_name}/{$this->github_zip_name}",
             'sections' => ['description' => 'Plugin pro správu nemovitostí s automatickými aktualizacemi přes GitHub.']
         ];
     }
