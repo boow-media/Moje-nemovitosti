@@ -72,7 +72,7 @@ class Makler_Plus_Updater {
 }
 
 // ✅ Spuštění
-new Makler_Plus_Updater(__FILE__);
+new Makler_Plus_Updater(plugin_dir_path(__DIR__) . 'makler-plus.php');
 
 // ✅ Reset při aktivaci
 register_activation_hook(__FILE__, function () {

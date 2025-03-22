@@ -1,0 +1,1 @@
+// Tento soubor je připravený pro budoucí JavaScript v adminu

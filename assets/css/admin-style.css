@@ -1,0 +1,30 @@
+/* Styl štítků ve sloupci */
+.makler-badge {
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    display: inline-block;
+    min-width: 80px;
+    text-align: center;
+    color: #333;
+}
+
+/* Barvy pro jednotlivé stavy */
+.makler-aktivni {
+    background-color: #d4edda;
+}
+
+.makler-rezervovano {
+    background-color: #fff3cd;
+}
+
+.makler-prodano {
+    background-color: #f8d7da;
+}
+
+/* Sloupec "Stav nabídky" – zarovnat na střed */
+th.column-stav_nabidky,
+td.column-stav_nabidky {
+    text-align: center !important;
+}
