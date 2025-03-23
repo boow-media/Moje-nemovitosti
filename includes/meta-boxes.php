@@ -12,8 +12,8 @@ add_filter('rwmb_meta_boxes', function ($meta_boxes) {
         'fields'     => [
             ['name' => 'Číslo zakázky', 'id' => 'cislo_zakazky', 'type' => 'text'],
             ['name' => 'Stav nabídky', 'id' => 'stav_nabidky', 'type' => 'select', 'options' => [
-                'aktivni'      => 'Aktivní',
-                'rezervovano'  => 'Rezervováno',
+                'aktivni'      => 'Na prodej',
+                'rezervovano'  => 'Rezervace',
                 'prodano'      => 'Prodáno',
             ]],
             ['name' => 'Adresa', 'id' => 'adresa', 'type' => 'text'],

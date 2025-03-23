@@ -4,7 +4,7 @@ Tags: real estate, nemovitosti, makléř, metabox, realitní kancelář
 Requires at least: 5.8
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 1.11.0
+Stable tag: 1.12.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -37,6 +37,12 @@ Ano. Otestováno s Breakdance, Elementor i klasickým editorem.
 
 == Changelog ==
 
+= 1.12.0 =
+* Přejmenovány stavy nabídky na: **Na prodej**, **Rezervace**, **Prodáno**
+* Úprava výstupních štítků v administraci i editaci příspěvku
+* Aktualizace popisků pro lepší srozumitelnost a přirozenost
+* Příprava na oddělení prodaných nemovitostí (v budoucnu samostatný CPT)
+
 = 1.11.0 =
 * Přidány radio buttony místo checkboxů pro lepší kompatibilitu
 * Oprava formátování cen a ploch
@@ -44,5 +50,5 @@ Ano. Otestováno s Breakdance, Elementor i klasickým editorem.
 
 == Upgrade Notice ==
 
-= 1.11.0 =
-Doporučeno aktualizovat – nová pole a lepší kompatibilita s editory.
+= 1.12.0 =
+Nové názvy stavů nabídky – doporučujeme zkontrolovat výstupy na webu, hlavně pokud používáte vlastní šablony nebo štítky ve frontendu.

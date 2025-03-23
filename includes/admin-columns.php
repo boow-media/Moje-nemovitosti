@@ -19,9 +19,9 @@ add_action('manage_nemovitosti_posts_custom_column', function ($column, $post_id
         $stav = get_post_meta($post_id, 'stav_nabidky', true);
 
         $nazvy = [
-            'aktivni' => 'Aktivní',
-            'rezervovano' => 'Rezervováno',
-            'prodano' => 'Prodáno',
+            'aktivni'     => 'Na prodej',
+            'rezervovano' => 'Rezervace',
+            'prodano'     => 'Prodáno',
         ];
 
         if ($stav && isset($nazvy[$stav])) {

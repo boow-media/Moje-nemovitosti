@@ -3,7 +3,7 @@
  * Plugin Name: Makléř+
  * Plugin URI: https://boow.cz
  * Description: Plugin pro realitní makléře – přidávání, správa a zobrazení nemovitostí. Funguje s Meta Box pluginem.
- * Version: 1.11.0
+ * Version: 1.2.0
  * Author: Boow Media
  * Author URI: https://boow.cz
  * License: GPL2

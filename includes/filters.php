@@ -24,3 +24,35 @@ add_filter('rwmb_typ_nemovitosti_value', function ($value) {
     ];
     return $nazvy[$value] ?? $value;
 });
+
+// ✅ Překlad stavu nemovitosti
+add_filter('rwmb_stav_nemovitosti_value', function ($value) {
+    $nazvy = [
+        'novostavba'         => 'Novostavba',
+        'velmi_dobry'        => 'Velmi dobrý',
+        'po_rekonstrukci'    => 'Po rekonstrukci',
+        'pred_rekonstrukci'  => 'Před rekonstrukcí',
+    ];
+    return $nazvy[$value] ?? $value;
+});
+
+// ✅ Překlad druhu objektu
+add_filter('rwmb_druh_objektu_value', function ($value) {
+    $nazvy = [
+        'cihla'       => 'Cihla',
+        'panel'       => 'Panel',
+        'drevostavba' => 'Dřevostavba',
+        'smisena'     => 'Smíšená',
+    ];
+    return $nazvy[$value] ?? $value;
+});
+
+// ✅ Překlad typu domu
+add_filter('rwmb_typ_domu_value', function ($value) {
+    $nazvy = [
+        'radovy'     => 'Řadový',
+        'samostatny' => 'Samostatný',
+        'patrovy'    => 'Patrový',
+    ];
+    return $nazvy[$value] ?? $value;
+});

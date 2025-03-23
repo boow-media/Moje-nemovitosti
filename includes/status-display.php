@@ -11,15 +11,15 @@ add_action('edit_form_after_title', function () {
     $stav = get_post_meta($post->ID, 'stav_nabidky', true);
 
     $nazvy = [
-        'aktivni' => 'Aktivní',
-        'rezervovano' => 'Rezervováno',
-        'prodano' => 'Prodáno',
+        'aktivni'     => 'Na prodej',
+        'rezervovano' => 'Rezervace',
+        'prodano'     => 'Prodáno',
     ];
 
     $barvy = [
-        'aktivni' => 'makler-aktivni',
+        'aktivni'     => 'makler-aktivni',
         'rezervovano' => 'makler-rezervovano',
-        'prodano' => 'makler-prodano',
+        'prodano'     => 'makler-prodano',
     ];
 
     if (!empty($nazvy[$stav]) && !empty($barvy[$stav])) {
